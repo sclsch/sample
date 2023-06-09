@@ -11,8 +11,12 @@
     <groupId>work.hdjava</groupId>
     <artifactId>sample</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>sample</name>
     <description>sample</description>
+    <modules>
+        <module>sample-user</module>
+    </modules>
     <properties>
         <java.version>17</java.version>
         <spring.cloud.version>2022.0.0</spring.cloud.version>
