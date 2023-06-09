@@ -53,3 +53,12 @@ spring:
               delete-allow: false # 不允许执行delete操作
               create-table-allow: false # 不允许创建表
               # 更多用法，参考官方文档：https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE-wallfilter
+
+
+mybatis:
+  #配置MyBatis的xml配置文件路径
+  mapper-locations: classpath:mapperxml/*.xml
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
