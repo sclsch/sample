@@ -1,4 +1,5 @@
 package work.hdjava.sample.user.controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import work.hdjava.sample.user.domain.UUser;
 import org.springframework.web.bind.annotation.*;
 import work.hdjava.sample.user.service.UUserService;
@@ -16,7 +17,7 @@ public class UUserController {
     /**
     * 服务对象
     */
-    @Resource
+    @Autowired
     private UUserService uUserService;
 
     /**
@@ -27,7 +28,7 @@ public class UUserController {
     */
     @GetMapping("selectOne")
     public UUser selectOne(Integer id) {
-      return uUserService.getById(id);
+        return uUserService.getById(id);
     }
 
 }
