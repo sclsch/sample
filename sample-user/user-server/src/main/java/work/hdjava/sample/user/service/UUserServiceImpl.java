@@ -1,4 +1,4 @@
-package work.hdjava.sample.user.service.impl;
+package work.hdjava.sample.user.service;
 
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
