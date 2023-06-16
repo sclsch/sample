@@ -122,4 +122,7 @@ public class SpringAuthServerConfig {
         }
         return keyPair;
     }
+
+    //授权码：
+    // http://localhost:6002/oauth2/authorize?client_id=client&scope=user_info&state=123456&response_type=code&redirect_uri=http://127.0.0.1:8080/callback
 }

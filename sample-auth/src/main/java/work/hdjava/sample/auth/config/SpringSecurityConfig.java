@@ -19,12 +19,10 @@ public class SpringSecurityConfig {
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorize) -> authorize
                         .anyRequest().authenticated()
-                )
-                .formLogin(Customizer.withDefaults());
+                ).formLogin(Customizer.withDefaults());
         return http.build();
     }
 
@@ -40,4 +38,5 @@ public class SpringSecurityConfig {
                 .build();
         return new InMemoryUserDetailsManager(userDetails);
     }
+
 }
