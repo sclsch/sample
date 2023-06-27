@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import work.hdjava.sample.user.domain.UUser;
+import work.hdjava.sample.user.dto.UserDto;
 
 /**
  * All rights Reserved, Designed By 八方浩达.
@@ -38,4 +39,6 @@ public interface UUserMapper extends BaseMapper<UUser> {
     int insertOrUpdate(UUser record);
 
     int insertOrUpdateSelective(UUser record);
+
+    UserDto queryByAccount(String account);
 }

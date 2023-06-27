@@ -3,7 +3,9 @@ package work.hdjava.sample.user.service;
 import java.util.List;
 import work.hdjava.sample.user.domain.UUser;
 import com.baomidou.mybatisplus.extension.service.IService;
-    /**
+import work.hdjava.sample.user.dto.UserDto;
+
+/**
  * All rights Reserved, Designed By 八方浩达.
  * @author: suncl
  * @date: 2023/6/9 21:13
@@ -27,4 +29,10 @@ public interface UUserService extends IService<UUser>{
 
     int insertOrUpdateSelective(UUser record);
 
+    /**
+     * 根据账号查询用户
+     * @param account 账号名称
+     * @return
+     */
+    UserDto queryByAccount(String account);
 }

@@ -407,4 +407,8 @@
       </if>
     </trim>
   </insert>
+
+  <select id="queryByAccount" resultType="work.hdjava.sample.user.dto.UserDto">
+    select * from u_user where account = #{account}
+  </select>
 </mapper>

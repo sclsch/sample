@@ -1,7 +1,9 @@
 package work.hdjava.sample.user.controller;
 import org.springframework.beans.factory.annotation.Autowired;
+import work.hdjava.sample.common.entity.ResEntity;
 import work.hdjava.sample.user.domain.UUser;
 import org.springframework.web.bind.annotation.*;
+import work.hdjava.sample.user.dto.UserDto;
 import work.hdjava.sample.user.service.UUserService;
 
 import javax.annotation.Resource;
@@ -29,6 +31,13 @@ public class UUserController {
     @GetMapping("selectOne")
     public UUser selectOne(Integer id) {
         return uUserService.getById(id);
+    }
+
+
+    @RequestMapping("/queryByAccount")
+    public ResEntity<UserDto> queryByAccount(@RequestParam("account") String account){
+        UserDto userDto = uUserService.queryByAccount(account);
+        return userDto == null ? new ResEntity<>().fail("用户不存在") : new ResEntity<>().success(userDto);
     }
 
 }

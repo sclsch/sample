@@ -5,6 +5,8 @@ import javax.annotation.Resource;
 import java.util.List;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import java.util.List;
+
+import work.hdjava.sample.user.dto.UserDto;
 import work.hdjava.sample.user.mapper.UUserMapper;
 import work.hdjava.sample.user.domain.UUser;
 import work.hdjava.sample.user.service.UUserService;
@@ -45,5 +47,10 @@ public class UUserServiceImpl extends ServiceImpl<UUserMapper, UUser> implements
     @Override
     public int insertOrUpdateSelective(UUser record) {
         return baseMapper.insertOrUpdateSelective(record);
+    }
+
+    @Override
+    public UserDto queryByAccount(String account) {
+        return  this.baseMapper.queryByAccount(account);
     }
 }

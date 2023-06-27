@@ -5,10 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration(proxyBeanMethods = false)
@@ -25,19 +22,23 @@ public class SpringSecurityConfig {
                 ).formLogin(Customizer.withDefaults());
         return http.build();
     }
-
-    /**
-     * 内存存储用户
-     */
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("123456")
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(userDetails);
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/oauth/*");
     }
+
+//    /**
+//     * 内存存储用户
+//     */
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails userDetails = User.withDefaultPasswordEncoder()
+//                .username("user")
+//                .password("123456")
+//                .roles("USER")
+//                .build();
+//        return new InMemoryUserDetailsManager(userDetails);
+//    }
 
 
 
