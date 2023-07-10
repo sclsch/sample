@@ -25,7 +25,7 @@ public class SampleAuthServer {
 
         ConfigurableApplicationContext run = SpringApplication.run(SampleAuthServer.class, args);
         PasswordEncoder passwordEncoder = run.getBean("passwordEncoder", PasswordEncoder.class);
-        String encode = passwordEncoder.encode("111");
+        String encode = passwordEncoder.encode("secret");
         System.out.println(encode);
     }
 }
