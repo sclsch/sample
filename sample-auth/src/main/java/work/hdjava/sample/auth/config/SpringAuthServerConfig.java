@@ -29,6 +29,8 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+
+import javax.annotation.Resource;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -38,8 +40,8 @@ import java.util.UUID;
 @Configuration(proxyBeanMethods = false)
 public class SpringAuthServerConfig {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+//    @Resource
+//    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     public PasswordEncoder passwordEncoder;
