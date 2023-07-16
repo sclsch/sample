@@ -29,8 +29,8 @@ public class UUserController {
     * @return 单条数据
     */
     @GetMapping("selectOne")
-    public UUser selectOne(Integer id) {
-        return uUserService.getById(id);
+    public ResEntity selectOne(Integer id) {
+        return new ResEntity().success(uUserService.getById(id));
     }
 
 

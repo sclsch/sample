@@ -1,0 +1,39 @@
+server:
+  port: 6111
+
+spring:
+  application:
+    name: gateway-server
+  cloud:
+    nacos:
+      username: nacos
+      password: nacos
+      discovery:
+        # 服务注册地址
+        #         server-addr: 8.142.162.103:8848
+        server-addr: 192.168.0.251:8848
+        group: suncl
+        namespace: ed15f14e-692e-4910-be63-db4c6d2e7484
+      config:
+        # 配置中心地址
+        #        server-addr: 8.142.162.103:8848
+        server-addr: 192.168.0.251:8848
+        # 配置文件格式
+        file-extension: yml
+        # 共享配置
+        #        shared-configs:
+        #          - application.${spring.cloud.nacos.config.file-extension}
+        timeout: 5000
+        # 长轮询超时时间
+        config-long-poll-timeout: 10000
+        # 轮询的重试时间
+        config-retry-time: 2000
+        # 长轮询最大重试次数
+        max-retry: 3
+        # 开启监听和自动刷新
+        refresh-enabled: true
+        # Nacos的扩展配置项，数字越大优先级越高
+        extension-configs:
+          - data-id: gateway-server.yml
+            refresh: true
+        namespace: ed15f14e-692e-4910-be63-db4c6d2e7484
