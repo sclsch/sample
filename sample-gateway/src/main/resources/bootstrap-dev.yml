@@ -5,6 +5,9 @@ spring:
   application:
     name: gateway-server
   cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
     nacos:
       username: nacos
       password: nacos

@@ -1,32 +1,34 @@
 package work.hdjava.sample.gateway.filter;
 
-import com.alibaba.fastjson.JSON;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.MultiValueMap;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import work.hdjava.sample.common.enums.CodeEnum;
 import work.hdjava.sample.common.exception.GateWayException;
+import work.hdjava.sample.gateway.dto.JwkKey;
+import work.hdjava.sample.gateway.dto.JwksDto;
 import work.hdjava.sample.gateway.properties.NotAuthUrlProperties;
+import work.hdjava.sample.gateway.util.TokenHelper;
 
 import java.security.PublicKey;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @Order(0)
@@ -48,6 +50,16 @@ public class AuthenticationFilter implements GlobalFilter, InitializingBean {
      */
     @Autowired
     private NotAuthUrlProperties notAuthUrlProperties;
+
+    /**
+     * jwt的公钥,需要网关启动,远程调用认证中心去获取公钥
+     */
+    private PublicKey publicKey;
+
+    @Autowired
+    private LoadBalancerClient loadBalancerClient;
+    @Autowired
+    private RestTemplate restTemplate;
     
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -75,30 +87,42 @@ public class AuthenticationFilter implements GlobalFilter, InitializingBean {
         //3. 校验token
 
         //第一步:封装请求头
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBasicAuth(CLIENT_ID,CLIENT_SECRET);
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(null, headers);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//        headers.setBasicAuth(CLIENT_ID,CLIENT_SECRET);
+//        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(null, headers);
 
         String access_token = authHeader.contains(AUTH_HEADER) ? StringUtils.substringAfter(authHeader, AUTH_HEADER) : authHeader;
-        String checkTokenUrl = "http://auth-server/oauth2/check_token?token=".concat(access_token);
+     //   ServiceInstance serviceInstance = loadBalancerClient.choose("auth-server");
+      //  String host = serviceInstance.getHost();
+      //  int port = serviceInstance.getPort();
+      //  String kwksUrl = String.format("http://%s:%s/oauth2/jwks",host,port);
+      //  String kwksUrl = "http://192.168.0.233:6002/oauth2/jwks";
+      //  String kwksUrl = "http://user-server/test/a";
+        String kwksUrl = "http://auth-server/oauth2/jwks";
         try {
+      //  String kwksUrl = "http://192.168.0.233:6002/oauth2/jwks";
             // 发送远程请求，验证 token
-            ResponseEntity<String> exchangeCheckToken = restTemplate.exchange(checkTokenUrl, HttpMethod.GET, entity, String.class);
-         //   ResponseEntity<String> entity = restTemplate.getForEntity(checkTokenUrl, String.class);
+
+       //     JwksDto forObject = restTemplate.getForObject(kwksUrl, JwksDto.class);
+            ResponseEntity<JwksDto> jwksDtoResponseEntity = restTemplate.exchange(kwksUrl, HttpMethod.GET, null, JwksDto.class);
+         //   ResponseEntity<String> entity = restTemplate.getForEntity(kwksUrl, String.class);
             // token 无效的业务逻辑处理
-            if (HttpStatus.OK != exchangeCheckToken.getStatusCode()) {
+            if (HttpStatus.OK != jwksDtoResponseEntity.getStatusCode()) {
                 throw new GateWayException(CodeEnum.TOKEN_NOT_RECOGNISED);
 
             }
-            if (StringUtils.isBlank(exchangeCheckToken.getBody())) {
+            JwksDto body = jwksDtoResponseEntity.getBody();
+            if (body == null) {
                 throw new GateWayException(CodeEnum.TOKEN_INVALID);
             }
-            log.info("tokenInfo:{}",exchangeCheckToken.getBody());
+            JwkKey jwkKey = body.getKeys().get(0);
+            boolean verify = TokenHelper.verify(TokenHelper.getPublicKey(jwkKey.getN(), jwkKey.getE()), access_token);
+            log.info("verify:{}", verify);
             /**
              * {"aud":["app"],"user_name":"ziya","scope":["web"],"active":true,"exp":1679409165,"authorities":["$2a$10$MmktEVRp7e5OS/IgkBtdbu71MXQRzXYxXw.aiDiCm9jd7dJZuZTZG"],"client_id":"app"}
              */
-//            CheckTokenDto checkTokenDto = JSON.parseObject(exchangeCheckToken.getBody(), CheckTokenDto.class);
+//            CheckTokenDto checkTokenDto = JSON.parseObject(jwksDtoResponseEntity.getBody(), CheckTokenDto.class);
 //            String perms = checkTokenDto.getAuthorities().stream().map(String::valueOf).collect(Collectors.joining(","));
             ServerHttpRequest request = exchange.getRequest().mutate()
                   //  .header("userName",checkTokenDto.getUser_name())
@@ -117,13 +141,7 @@ public class AuthenticationFilter implements GlobalFilter, InitializingBean {
     }
 
 
-    /**
-     * jwt的公钥,需要网关启动,远程调用认证中心去获取公钥
-     */
-    private PublicKey publicKey;
 
-    @Autowired
-    private RestTemplate restTemplate;
 
     //afterPropertiesSet     bean初始化期间调的
     @Override

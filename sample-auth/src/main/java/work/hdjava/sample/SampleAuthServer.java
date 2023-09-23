@@ -1,6 +1,5 @@
 package work.hdjava.sample;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -9,7 +8,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 
 @SpringBootApplication
 @EnableFeignClients
@@ -29,7 +27,5 @@ public class SampleAuthServer {
         String encode = passwordEncoder.encode("secret");
         System.out.println(encode);
 
-        ClientSettings build = ClientSettings.builder().requireAuthorizationConsent(true).build();
-        System.out.println("111");
     }
 }

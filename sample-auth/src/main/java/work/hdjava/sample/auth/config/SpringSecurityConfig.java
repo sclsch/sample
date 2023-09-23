@@ -25,7 +25,13 @@ public class SpringSecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) ->
-            web.ignoring().requestMatchers("/oauth/*","/login/*","/actuator/*");
+            web.ignoring().requestMatchers(
+                    "/oauth/*",
+                    "/login/*",
+                    "/actuator/*",
+                    "/.well-known/*",
+                    "/jwks"
+            );
     }
 
 //    /**
